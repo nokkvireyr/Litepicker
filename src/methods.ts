@@ -6,6 +6,7 @@ declare module './litepicker' {
   // tslint:disable-next-line: interface-name
   interface Litepicker {
     show(element?): void;
+    scroll(element?): void;
     hide(): void;
     gotoDate(date, idx?): void;
     clearSelection(): void;
@@ -62,6 +63,43 @@ Litepicker.prototype.show = function (el = null) {
   this.ui.style.bottom = null;
 
   this.emit('show', el);
+};
+
+Litepicker.prototype.scroll = function (el = null) {
+  this.emit('before:scroll', el);
+  const element = el ? el : this.options.element;
+  this.triggerElement = element;
+
+  if (!this.isShowning()) {
+    return;
+  }
+
+  if (this.options.inlineMode) {
+    this.ui.style.position = 'relative';
+    this.ui.style.display = 'inline-block';
+    this.ui.style.top = null;
+    this.ui.style.left = null;
+    this.ui.style.bottom = null;
+    this.ui.style.right = null;
+    return;
+  }
+
+  this.scrollToDate(el);
+
+  this.render();
+
+  this.ui.style.position = 'absolute';
+  this.ui.style.display = 'block';
+  this.ui.style.zIndex = this.options.zIndex;
+
+  const position = this.findPosition(element);
+
+  this.ui.style.top = `${position.top}px`;
+  this.ui.style.left = `${position.left}px`;
+  this.ui.style.right = null;
+  this.ui.style.bottom = null;
+
+  this.emit('scroll', el);
 };
 
 Litepicker.prototype.hide = function () {

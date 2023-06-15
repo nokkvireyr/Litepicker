@@ -66,8 +66,10 @@ export class Litepicker extends Calendar {
     if (this.options.parentEl) {
       if (this.options.parentEl instanceof HTMLElement) {
         this.options.parentEl.appendChild(this.ui);
+        this.options.parentEl.addEventListener('scroll', this.onScroll.bind(this), true);
       } else {
         (document.querySelector(this.options.parentEl) as HTMLElement).appendChild(this.ui);
+        (document.querySelector(this.options.parentEl) as HTMLElement).addEventListener('scroll', this.onScroll.bind(this), true);
       }
     } else {
       if (this.options.inlineMode) {
@@ -78,6 +80,7 @@ export class Litepicker extends Calendar {
         }
       } else {
         document.body.appendChild(this.ui);
+        document.addEventListener('scroll', this.onScroll.bind(this), true);
       }
     }
 
@@ -444,6 +447,12 @@ export class Litepicker extends Calendar {
 
     this.datePicked.length = 0;
     this.render();
+  }
+
+  private onScroll() {
+    if(this.isShowning()) {
+      this.scroll(this.options.element);
+    }
   }
 
   private onInput(event) {
